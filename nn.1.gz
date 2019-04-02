@@ -1,0 +1,80 @@
+.TH "NN" "1" "2019-03-10" "0.1" "nn"
+.SH NAME
+nn \- neural network program
+.SH SYNOPSIS
+.B nn
+.RB command
+.RB [options]
+.RB [args]
+.SH DESCIPTION
+NN is a simple neural network program that
+allows its users to create and train neural networks.
+
+.SH COMMANDS
+
+One of these options must be present
+
+.SS random
+
+.B random
+.RB [-o
+.RB output_file]
+.RB input_layer
+.RB hidden_layer1
+.RB hidden_layer2
+.RB ...
+.RB output_layer
+
+Creates random neural network.
+User need to provide number of neurons in each layer
+Default output file is
+.B out.net
+, but user can specify an output file with
+.B -o
+option.
+
+.SS show
+
+.B show
+.RB network_file
+
+Prints out the information
+about the neural network.
+
+.SS pack
+
+.B pack
+.RB input_text_file
+.RB output_data_file
+
+Converts text number values
+into output "packed" data file
+that can be user pack values.
+
+.SS pass
+
+.B pass
+.RB input_arg1
+.RB input_arg2
+.RB ...
+
+Passes the input into the network
+and outputs the result.
+
+.SS train
+
+.B train
+.RB [-o
+.RB output_network]
+.RB [-e
+.RB number_of_epochs]
+.RB input_network
+.RB input_data
+.RB [output_network]
+
+.B NOTE
+When no output network is specified
+the input network will used as output.
+
+Trains the network with supplied data.
+
