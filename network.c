@@ -357,19 +357,6 @@ double network_train(network_t net, double *partial, double *outputs, double *er
 
     network_backprop(net, partial, outputs, errors);
 
-
-    /*
-    printf("TRAINING ");
-    printf("INPUT (%lf", input[0]);
-    for(i = 1; i < net->num_in; i++) {
-        printf(", %lf", input[i]);
-    }
-    printf(") TARGET (%lf", target[0]);
-    for(i = 1; i < net->num_out; i++) {
-        printf(", %lf", input[i]);
-    }
-    printf(")\n");*/
-
     neuron_index = 0;
     neuron = net->neurons;
     deltas = net->deltas;
@@ -378,19 +365,13 @@ double network_train(network_t net, double *partial, double *outputs, double *er
 
         tmp = outputs + neuron_index;
 
-        //printf("\tLAYER %d\n", layer);
-
         foreach_neuron(net, n, neuron, layer, num_weight) {
-
-            //printf("\t\tNeuron %d (Output %lf, Error: %lf): \n", n, outputs[neuron_index], errors[neuron_index]);
-            //printf("\t\t\tW0:  %lf, ΔE: %lf\n", neuron[0], eta * errors[neuron_index] * act_func_deri(outputs[neuron_index], outputs_partial[neuron_index]));
 
             deltas[0] *= momentum; 
             deltas[0] -= learning * errors[neuron_index];
             neuron[0] += deltas[0];
 
             for(i = 1; i <= num_weight; i++) {
-                //printf("\t\t\tW%d:  %lf, ΔE: %lf\n", i, neuron[i], eta * errors[neuron_index] * act_func_deri(outputs[neuron_index], outputs_partial[neuron_index]) * neuron_input[i-1]);
                 deltas[i] *= momentum; 
                 deltas[i] -= learning * errors[neuron_index] * neuron_input[i-1];
                 neuron[i] += deltas[i];
