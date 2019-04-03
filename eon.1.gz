@@ -1,24 +1,28 @@
-.TH "NN" "1" "2019-03-10" "0.1" "nn"
+.TH "eon" "1" "2019-03-10" "0.1" "Bednarek - eoNeural"
 .SH NAME
-nn \- neural network program
+eoNeural \- neural network program
 .SH SYNOPSIS
-.B nn
+.B eon
 .RB command
 .RB [options]
 .RB [args]
 .SH DESCIPTION
-NN is a simple neural network program that
+eoNeural is a simple neural network program that
 allows its users to create and train neural networks.
 
 .SH COMMANDS
 
 One of these options must be present
 
-.SS random
+.SS create
 
-.B random
+.B create
 .RB [-o
 .RB output_file]
+.RB [-a
+.RB activation_function]
+.RB [-w
+.RB predefined_weights]
 .RB input_layer
 .RB hidden_layer1
 .RB hidden_layer2
@@ -32,6 +36,24 @@ Default output file is
 , but user can specify an output file with
 .B -o
 option.
+.B -a
+can be used to set the activation function.
+The default activation function is sigmoid
+.B -w
+can be used to create a network with a set weights from a data file.
+
+.B Activation funcions
+
+.IP \[bu]
+identity
+.IP \[bu]
+sigmoid
+.IP \[bu]
+tanh
+.IP \[bu]
+atan
+.IP \[bu]
+gaussian
 
 .SS show
 
@@ -54,12 +76,22 @@ that can be user pack values.
 .SS pass
 
 .B pass
+.RB [-t
+.RB training_data]
+.RB [-d
+.RB data]
 .RB input_arg1
 .RB input_arg2
 .RB ...
 
 Passes the input into the network
 and outputs the result.
+
+.B -t
+option allows to specify the traning data to pass though the network
+
+.B -d
+option allows to specify any data to pass though the network
 
 .SS train
 
@@ -68,6 +100,12 @@ and outputs the result.
 .RB output_network]
 .RB [-e
 .RB number_of_epochs]
+.RB [-r
+.RB target_rmns]
+.RB [-l
+.RB learning_cof]
+.RB [-m
+.RB momentum]
 .RB input_network
 .RB input_data
 .RB [output_network]
@@ -77,4 +115,3 @@ When no output network is specified
 the input network will used as output.
 
 Trains the network with supplied data.
-

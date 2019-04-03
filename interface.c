@@ -55,7 +55,7 @@ int action_create(int argc, char **argv) {
             if(++i < argc) {
                 output_file = argv[i];
                 if(strlen(output_file) == 0) {
-                    puts("File name can't be empty.");
+                    fprintf(stderr, "File name can't be empty.");
                     return 4;
                 }
             }
@@ -63,7 +63,7 @@ int action_create(int argc, char **argv) {
             if(++i < argc) {
                 weights_file = argv[i];
                 if(strlen(weights_file) == 0) {
-                    puts("File name can't be empty.");
+                    fprintf(stderr, "File name can't be empty.");
                     return 4;
                 }
             }
@@ -82,7 +82,7 @@ int action_create(int argc, char **argv) {
     }
 
     if(num_layers < 1) {
-        puts("Needs at least 1 layer.");
+        fprintf(stderr, "Needs at least 1 layer.");
         return 1;
     }
 
@@ -98,13 +98,13 @@ int action_create(int argc, char **argv) {
             if(num_layers == -1) {
                 num_in = strtol(argv[i], NULL, 10);
                 if(num_in < 1) {
-                    puts("Number of inputs can't be lower than 1.");
+                    fprintf(stderr, "Number of inputs can't be lower than 1.");
                     return 2;
                 }
             } else {
                 num_neurons[num_layers] = strtol(argv[i], NULL, 10); 
                 if(num_neurons[num_layers] < 1) {
-                    puts("Number of neurons in a layer can't be lower than 1.");
+                    fprintf(stderr, "Number of neurons in a layer can't be lower than 1.");
                     return 3;
                 }
             }
@@ -131,14 +131,15 @@ int action_show(int argc, char **argv) {
     network_t net;
 
     if(argc < 3) {
-        puts("Please provide an input file.");
+        fprintf(stderr, "Please provide an input file.");
         return 1;
     }
 
     net = network_load(argv[2]);
 
     if(!net) {
-        puts("Invalid network file.");
+        fprintf(stderr,"Invalid network file.");
+        return 2;
     }
 
     printf("Input values: %d\n", net->num_in);
@@ -171,7 +172,7 @@ int action_pass(int argc, char **argv) {
     double *input, *cursor, *result;
 
     if(argc < 3) {
-        puts("Please provide an input file.");
+        fprintf(stderr, "Please provide an input file.");
         return 1;
     }
 
@@ -190,7 +191,7 @@ int action_pass(int argc, char **argv) {
             if(k == 0) {
                 net = network_load(argv[i]);
                 if(!net) {
-                    puts("Invalid network file.");
+                    fprintf(stderr, "Invalid network file.");
                     return 2;
                 }
                 input = (double*) malloc(sizeof(double)*net->num_in);
@@ -202,7 +203,7 @@ int action_pass(int argc, char **argv) {
     }
 
     if(!net) {
-        puts("Please provide a network file.");
+        fprintf(stderr, "Please provide a network file.");
         return 2;
     }
 
@@ -242,7 +243,7 @@ int action_pass(int argc, char **argv) {
 
     if(k != net->num_in+1) {
         if(!training && !testing) {
-            puts("Wrong number of arguments.");
+            fprintf(stderr, "Wrong number of arguments.");
         }
         return 3;
     }
@@ -292,7 +293,7 @@ int action_pack(int argc, char **argv) {
 
 
     if(!fi || !fo) {
-        puts("Invalid arguments.");
+        fprintf(stderr, "Invalid arguments.");
         return 3;
     }
 
