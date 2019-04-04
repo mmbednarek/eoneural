@@ -12,4 +12,4 @@ install: all
 	cp -f $(OUT) $(PREFIX)/bin
 	chmod 755 $(PREFIX)/bin/nn
 	cp -f eon.1.gz $(MANPREFIX)/man1
-	chmod 644 $(MANPREFIX)/man1/nn.1.gz
+	chmod 644 $(MANPREFIX)/man1/eon.1.gz
