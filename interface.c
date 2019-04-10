@@ -389,6 +389,12 @@ int action_train(int argc, char **argv) {
     }
 
     data = load_number_data(input_data, &n);
+
+    if(!data || n == 0) {
+        fprintf(stderr, "Invalid data file.");
+        return 2;
+    }
+
     n /= net->num_in + net->num_out;
 
     outputs_partial = network_alloc_area(net);
@@ -422,10 +428,10 @@ int action_train(int argc, char **argv) {
     printf("Elapsed time: %lfs\n", (double)(t_end - t_start)/CLOCKS_PER_SEC);
     
 
+    free(data);
     free(errors);
     free(outputs);
     free(outputs_partial);
-    free(data);
 
     network_save(net, output_network);
 

@@ -82,7 +82,7 @@ network_t network_create(int num_in, int num_layers, int *num_neurons, unsigned 
         total_neurons   = 0,
         total_weights_d,
         total_neurons_d,
-        max_neurons     = 0;
+        max_neurons     = num_in;
 
     for(layer = 0; layer < num_layers; layer++) {
 
