@@ -166,7 +166,7 @@ int action_pass(int argc, char **argv) {
 
     network_t net;
     int i, k, num;
-    int cycles;
+    int cycles, pin = 1; /* pin - print input  */
     char *training = NULL, *testing = NULL;
     double *data;
     double *input, *cursor, *result;
@@ -187,6 +187,8 @@ int action_pass(int argc, char **argv) {
             if(++i < argc) {
                 testing = argv[i];
             }
+        } else if(!strcmp(argv[i], "-o")) {
+            pin = 0;
         } else {
             if(k == 0) {
                 net = network_load(argv[i]);
@@ -214,8 +216,10 @@ int action_pass(int argc, char **argv) {
         cursor = data;
         for(i = 0; i < cycles; i++) {
             result = network_perform(net, cursor);
-            print_array(cursor, net->num_in);
-            printf(" → ");
+            if(pin) {
+                print_array(cursor, net->num_in);
+                printf(" → ");
+            }
             print_array(result, net->num_out);
             putchar('\n');
             cursor += (net->num_in+net->num_out);
@@ -231,8 +235,10 @@ int action_pass(int argc, char **argv) {
         cursor = data;
         for(i = 0; i < cycles; i++) {
             result = network_perform(net, cursor);
-            print_array(cursor, net->num_in);
-            printf(" → ");
+            if(pin) {
+                print_array(cursor, net->num_in);
+                printf(" → ");
+            }
             print_array(result, net->num_out);
             putchar('\n');
             cursor += (net->num_in);
