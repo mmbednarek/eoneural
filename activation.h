@@ -1,7 +1,6 @@
 #pragma once
 
 struct activation {
-    
     unsigned num_params;
     const char *name;
     double(*func)(double,double*);
@@ -10,4 +9,4 @@ struct activation {
 };
 
 #define NUM_ACTIVATION_FUNCS 5
-struct activation activation_funcs[NUM_ACTIVATION_FUNCS];
+extern struct activation activation_funcs[NUM_ACTIVATION_FUNCS];

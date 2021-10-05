@@ -8,7 +8,6 @@
 #include "activation.h"
 
 static double *load_number_data(const char *filename, int *num) {
-
     FILE *f;
     size_t size;
     double *data;
@@ -39,7 +38,6 @@ static double *load_number_data(const char *filename, int *num) {
 }
 
 int action_create(int argc, char **argv) {
-
     char *output_file = "out.net", *weights_file = NULL;
     double *data;
     int i, k, num, num_in, *num_neurons, num_layers = -1;
@@ -127,7 +125,6 @@ int action_create(int argc, char **argv) {
 }
 
 int action_show(int argc, char **argv) {
-
     network_t net;
 
     if(argc < 3) {
@@ -163,7 +160,6 @@ static void print_array(double *data, int num) {
 }
 
 int action_pass(int argc, char **argv) {
-
     network_t net;
     int i, k, num;
     int cycles, pin = 1; /* pin - print input  */
@@ -268,7 +264,6 @@ int action_pass(int argc, char **argv) {
 }
 
 int action_pack(int argc, char **argv) {
-
     FILE *fi, *fo;
     double value;
     int c;
@@ -334,7 +329,6 @@ int action_pack(int argc, char **argv) {
 }
 
 int action_train(int argc, char **argv) {
-
     int i, n, k;
     long long epochs = 0;
     clock_t t_start, t_end;

@@ -3,7 +3,6 @@
 #include "interface.h"
 
 int main(int argc, char **argv) {
-
     if(argc < 2) {
         puts("Please provide an action. (random/show/pack/train/pass)");
         return 1;
