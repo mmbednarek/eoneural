@@ -5,7 +5,6 @@
 #include "activation.h"
 
 static void network_calculate_pointers(network_t net) {
-
     net->num_neurons = (int*) ((char*)net + sizeof(struct network_header));
 
     net->neurons = (neuron_t) ((char*)net->num_neurons +
@@ -18,7 +17,6 @@ static void network_calculate_pointers(network_t net) {
 }
 
 network_t network_create_raw(int num_in, int num_layers, int *num_neurons, unsigned char activation, double *weights) {
-
     network_t net;
     neuron_t  neuron;
 
@@ -72,7 +70,6 @@ network_t network_create_raw(int num_in, int num_layers, int *num_neurons, unsig
 }
 
 network_t network_create(int num_in, int num_layers, int *num_neurons, unsigned char activation) {
-
     network_t net;
     neuron_t  neuron;
 
@@ -134,7 +131,6 @@ network_t network_create(int num_in, int num_layers, int *num_neurons, unsigned 
 static const char NETWORK_SIG[] = "NNT";
 
 void network_save(network_t net, const char *filename) {
-
     void *num_neurons, *neurons, *deltas, *primary, *secondary;
     FILE *f;
     struct network_file_header header;
@@ -174,7 +170,6 @@ void network_save(network_t net, const char *filename) {
 }
 
 network_t network_load(const char *filename) {
-
     FILE *f;
     struct network_file_header header;
     network_t net;
@@ -212,7 +207,6 @@ network_t network_load(const char *filename) {
 }
 
 void network_print(network_t net) {
-
     int num_weight, layer, n, i;
     neuron_t neuron = net->neurons;
     double *deltas = net->deltas;
@@ -234,7 +228,6 @@ void network_print(network_t net) {
 }
 
 static void network_swap(network_t net) {
-
     double *tmp;
 
     tmp = net->primary;
@@ -244,7 +237,6 @@ static void network_swap(network_t net) {
 
 
 double *network_perform(network_t net, double *input) {
-
     int num_weight, layer, n;
     neuron_t neuron;
     double(*act_func)(double,double*);
@@ -267,7 +259,6 @@ double *network_perform(network_t net, double *input) {
 }
 
 static double *network_perform_ex(network_t net, double *input, double *output_partial, double *output) {
-
     int num_weight, layer, n, neuron_index;
     neuron_t neuron;
     double(*act_func)(double,double*);
@@ -298,7 +289,6 @@ double *network_alloc_area(network_t net) {
 }
 
 static void network_backprop(network_t net, double *partial, double *outputs, double *errors) {
-
     int layer, n, i, num_weight, neuron_index, neuron_calc_index;
     double(*act_func_deri)(double,double);
     neuron_t neuron = net->neurons + net->total_weights;
@@ -334,7 +324,6 @@ static void network_backprop(network_t net, double *partial, double *outputs, do
 }
 
 double network_train(network_t net, double *partial, double *outputs, double *errors, double *input, double *target, double learning, double momentum) {
-
     int i, layer, n, num_weight, neuron_index;
     double *ol_outputs, *ol_errors, *ol_partial, *neuron_input, *tmp;
     double mse = 0.0;
@@ -385,5 +374,4 @@ double network_train(network_t net, double *partial, double *outputs, double *er
     }
 
     return mse;
-
 }
