@@ -100,7 +100,7 @@ int action_create(int argc, char **argv) {
                     return 2;
                 }
             } else {
-                num_neurons[num_layers] = strtol(argv[i], NULL, 10); 
+                num_neurons[num_layers] = strtol(argv[i], NULL, 10);
                 if(num_neurons[num_layers] < 1) {
                     fprintf(stderr, "Number of neurons in a layer can't be lower than 1.");
                     return 3;
@@ -172,9 +172,25 @@ static double print_diff(const double *data, const double *expected_data, int nu
   return err;
 }
 
+static int find_classification(const double *data, int num) {
+  int i;
+  int top = 0;
+  for (i = 1; i < num; ++i) {
+    if (data[i] > data[top]) {
+      top = i;
+    }
+  }
+  return top;
+}
+
+static int is_classification_correct(const double *lhs, const double *rhs, int num) {
+  return find_classification(lhs, num) == find_classification(rhs, num);
+}
+
 int action_pass(int argc, char **argv) {
     network_t net;
     int i, k, num;
+    int well_qualified;
     int cycles, pin = 1; /* pin - print input  */
     char *training = NULL, *testing = NULL;
     double *data;
@@ -221,6 +237,7 @@ int action_pass(int argc, char **argv) {
     if(training != NULL) {
         data = load_number_data(training, &num);
         cycles = num / (net->num_in + net->num_out);
+        well_qualified = 0;
 
         cursor = data;
         for(i = 0; i < cycles; i++) {
@@ -232,12 +249,22 @@ int action_pass(int argc, char **argv) {
             print_array(result, net->num_out);
             printf(" (");
             double err = print_diff(cursor + net->num_in, result, net->num_out);
-            printf(")\n");
+            printf(") ");
+
+            if (is_classification_correct(cursor + net->num_in, result, net->num_out)) {
+              ++well_qualified;
+              printf("OK");
+            } else {
+              printf("FAIL");
+            }
+            putchar('\n');
+
             cursor += (net->num_in+net->num_out);
             total_err += err;
         }
 
-        printf("MSE: %lf", (total_err / (double) net->num_out / (double) cycles));
+        printf("MSE: %lf\n", (total_err / (double) net->num_out / (double) cycles));
+        printf("accuracy: %lf%%\n", (100.0 * (double)well_qualified / (double) cycles));
         free(data);
     }
 
@@ -268,7 +295,7 @@ int action_pass(int argc, char **argv) {
     }
 
     result = network_perform(net, input);
-    
+
     printf("%lf", result[0]);
     for(i = 1; i < net->num_out; i++) {
         printf(" %lf", result[i]);
@@ -323,7 +350,7 @@ int action_pack(int argc, char **argv) {
             if(cursor != number) {
                 *cursor = 0;
                 value = atof(number);
-                fwrite(&value, sizeof(double), 1, fo); 
+                fwrite(&value, sizeof(double), 1, fo);
             }
             break;
         }
@@ -334,10 +361,10 @@ int action_pack(int argc, char **argv) {
                 *cursor = 0;
                 cursor = number;
                 value = atof(number);
-                fwrite(&value, sizeof(double), 1, fo); 
+                fwrite(&value, sizeof(double), 1, fo);
             }
         }
-    } 
+    }
 
     fclose(fo);
     fclose(fi);
@@ -443,7 +470,7 @@ int action_train(int argc, char **argv) {
 
     t_end = clock();
     printf("Elapsed time: %lfs\n", (double)(t_end - t_start)/CLOCKS_PER_SEC);
-    
+
 
     free(data);
     free(errors);
