@@ -159,6 +159,19 @@ static void print_array(double *data, int num) {
     }
 }
 
+static double print_diff(const double *data, const double *expected_data, int num) {
+  int i;
+  double diff = expected_data[0] - data[0];
+  double err = diff * diff;
+  printf("%lf", diff);
+  for(i = 1; i < num; i++) {
+    diff = expected_data[i] - data[i];
+    err += diff * diff;
+    printf(" %lf", diff);
+  }
+  return err;
+}
+
 int action_pass(int argc, char **argv) {
     network_t net;
     int i, k, num;
@@ -166,6 +179,7 @@ int action_pass(int argc, char **argv) {
     char *training = NULL, *testing = NULL;
     double *data;
     double *input, *cursor, *result;
+    double total_err = 0.0;
 
     if(argc < 3) {
         fprintf(stderr, "Please provide an input file.");
@@ -174,7 +188,6 @@ int action_pass(int argc, char **argv) {
 
     k = 0;
     for(i = 2; i < argc; i++) {
-         
         if(!strcmp(argv[i], "-t")) {
             if(++i < argc) {
                 training = argv[i];
@@ -217,10 +230,14 @@ int action_pass(int argc, char **argv) {
                 printf(" → ");
             }
             print_array(result, net->num_out);
-            putchar('\n');
+            printf(" (");
+            double err = print_diff(cursor + net->num_in, result, net->num_out);
+            printf(")\n");
             cursor += (net->num_in+net->num_out);
+            total_err += err;
         }
 
+        printf("MSE: %lf", (total_err / (double) net->num_out / (double) cycles));
         free(data);
     }
 
