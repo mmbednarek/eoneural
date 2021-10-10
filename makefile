@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-lm -Wall -g
+CFLAGS=-lm -Wall -O3
 SRC = main.c neuron.c interface.c network.c activation.c
 OUT=eon
 PREFIX=/usr

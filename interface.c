@@ -310,7 +310,7 @@ int action_pack(int argc, char **argv) {
             }
             break;
         }
-        if((c >= '0' && c <= '9') || c == '-' || c == '.')  {
+        if((c >= '0' && c <= '9') || c == '-' || c == '.' || c == 'e')  {
             *(cursor++) = (char)c;
         } else {
             if(cursor != number) {
