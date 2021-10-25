@@ -1,0 +1,2 @@
+add_executable(eoneural_regression_bin main.cpp)
+target_link_libraries(eoneural_regression_bin eoneural_hpp rapidcsv fmt)

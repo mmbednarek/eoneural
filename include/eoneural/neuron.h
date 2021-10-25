@@ -1,6 +1,5 @@
 #pragma once
 
-
 typedef double* neuron_t;
 
 void neuron_random(neuron_t n, int num_weight);

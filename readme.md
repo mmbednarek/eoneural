@@ -1,6 +1,6 @@
 # eoNeural (eon)
 
-Simple cli application to train neural networks.
+Simple cli application to do_train_iteration neural networks.
 
 ## Compilation
 
@@ -21,7 +21,7 @@ eon pack - data
 1 0 1
 1 1 0
 ^D
-eon train out.net data
+eon do_train_iteration out.net data
 ```
 
 ## Basic commands
@@ -102,14 +102,14 @@ eon pass out.net -d datafile
 Basic training command is
 
 ```bash
-eon train out.net data
+eon do_train_iteration out.net data
 ```
 
 If we don't want to lose the source network file
 we can specify the output as a third argument or with -o option.
 
 ```bash
-eon train out.net data trained.net
+eon do_train_iteration out.net data trained.net
 ```
 
 The network is being trained until the RMSE is less or equal to 0.01
@@ -121,6 +121,6 @@ Momentum can be specified with the **-m** option. (The default is 0.3)
 **Example**
 
 ```bash
-eon train foo.net data trained.net -r 0.0005 -l 0.6 -m 0.4
+eon do_train_iteration foo.net data trained.net -r 0.0005 -l 0.6 -m 0.4
 ```
 
