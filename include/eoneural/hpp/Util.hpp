@@ -15,7 +15,7 @@ class RandomWeightGenerator {
    inline explicit RandomWeightGenerator(SeedType seed) : m_generator(seed),
                                                           m_dist(0, 1) {}
 
-   constexpr double operator()() {
+   inline double operator()() {
       return m_dist(m_generator);
    }
 };

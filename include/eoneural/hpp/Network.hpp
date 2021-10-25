@@ -155,7 +155,7 @@ class NetworkBuilder {
    ActivationFunc m_activation_func = ActivationFunc::Sigmoid;
    std::vector<double> m_weights;
 
-   [[nodiscard]] constexpr std::size_t calculate_total_weight_count() const {
+   [[nodiscard]] inline std::size_t calculate_total_weight_count() const {
       return std::accumulate(m_neuron_count.begin(), m_neuron_count.end(), 0, [prev_weight_count = static_cast<std::size_t>(m_input_count)](std::size_t acc, std::size_t next) mutable {
          auto result = acc + next * (prev_weight_count + 1);
          prev_weight_count = next;
@@ -174,7 +174,7 @@ class NetworkBuilder {
       return *this;
    };
 
-   constexpr NetworkBuilder &with_layer(int layer_count) {
+   inline NetworkBuilder &with_layer(int layer_count) {
       m_neuron_count.push_back(layer_count);
       return *this;
    };

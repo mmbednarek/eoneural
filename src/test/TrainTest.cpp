@@ -8,14 +8,14 @@
 
 class SpdMseLog {
  public:
-   constexpr void log_mse(double mse) const {
+   inline void log_mse(double mse) const {
       spdlog::info("MSE: {}", mse);
    }
 };
 
 class SpdCatLog {
  public:
-   constexpr void log_categorisation(double mse, double train, double test) const {
+   inline void log_categorisation(double mse, double train, double test) const {
       spdlog::info("MSE: {}, Train: {}, Test: {}", mse, train, test);
    }
 };
