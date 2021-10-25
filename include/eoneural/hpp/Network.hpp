@@ -17,6 +17,22 @@ enum class ActivationFunc {
    Gaussian = 4,
 };
 
+constexpr std::string_view activation_func_to_string(ActivationFunc func) {
+   switch (func) {
+   case ActivationFunc::Identity:
+      return "identity";
+   case ActivationFunc::Sigmoid:
+      return "sigmoid";
+   case ActivationFunc::Tanh:
+      return "tanh";
+   case ActivationFunc::Atan:
+      return "atan";
+   case ActivationFunc::Gaussian:
+      return "gaussian";
+   }
+   return "";
+}
+
 struct TrainResult {
    double mse;
    bool reached_objective{};
