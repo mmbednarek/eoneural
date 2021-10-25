@@ -42,4 +42,6 @@ Network NetworkBuilder::build() {
    return Network(network_create(m_input_count, m_neuron_count.size(), m_neuron_count.data(), static_cast<unsigned char>(m_activation_func)));
 }
 
+NoLogger g_no_logger;
+
 }

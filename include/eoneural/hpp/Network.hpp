@@ -4,8 +4,8 @@ extern "C" {
 #include "../network.h"
 };
 #include <numeric>
-#include <vector>
 #include <string_view>
+#include <vector>
 
 namespace eoneural {
 
@@ -31,7 +31,7 @@ concept TrainContext = requires(T v) {
    { v.partial_output() } -> std::convertible_to<double *>;
    { v.output() } -> std::convertible_to<double *>;
    { v.errors() } -> std::convertible_to<double *>;
-   { v.on_iteration_finished() };
+   {v.on_iteration_finished()};
 };
 
 class NetworkBuilder;
@@ -49,14 +49,16 @@ concept TrainObjective = requires(TO to, const TC &ctx, const Network &net, cons
 };
 
 template<typename T>
-concept Logger = requires(T v, TrainResult res) {
-   { v.log_epoch_result(res) };
+concept Logger = requires(T v, int epoch, int iter, const Network &net) {
+   {v.log_train_iteration(epoch, iter, net)};
 };
 
 class NoLogger {
  public:
-   constexpr void log_epoch_result(TrainResult) const {}
+   constexpr void log_train_iteration(int epoch, int iter, const Network &net) const {}
 };
+
+extern NoLogger g_no_logger;
 
 class Network {
    friend NetworkBuilder;
@@ -84,6 +86,18 @@ class Network {
       return m_net->num_out;
    }
 
+   [[nodiscard]] constexpr int weight_count() const {
+      return m_net->total_weights;
+   }
+
+   [[nodiscard]] constexpr double weight(std::size_t index) const {
+      return m_net->neurons[index];
+   }
+
+   [[nodiscard]] constexpr double delta(std::size_t index) const {
+      return m_net->deltas[index];
+   }
+
    [[nodiscard]] constexpr network_t raw() const {
       return m_net;
    }
@@ -95,7 +109,7 @@ class Network {
    }
 
    template<TrainContext TC, TrainObjective<TC> TO, Logger TL = NoLogger>
-   TrainResult train(TC &ctx, TO &to, int max_epoch = -1) {
+   TrainResult train(TC &ctx, TO &to, TL &logger = g_no_logger, int max_epoch = -1) {
       eoneural::TrainResult result{};
       int epoch = 0;
 
@@ -103,8 +117,9 @@ class Network {
          ctx.start_epoch();
          double total_mse = 0;
          int iteration = 0;
-         while(!ctx.has_finished_epoch()) {
+         while (!ctx.has_finished_epoch()) {
             total_mse += do_train_iteration(ctx);
+            logger.log_train_iteration(epoch, iteration, *this);
             ++iteration;
          }
          ++epoch;

@@ -26,9 +26,6 @@ class CSVWriter {
  public:
    constexpr explicit CSVWriter(std::ostream &stream) : m_stream(stream) {}
 
-   CSVWriter(const CSVWriter &other) = default;
-   CSVWriter &operator=(const CSVWriter &other) = default;
-
  private:
    template<typename TF, typename... TR>
    constexpr void internal_write(TF first, TR... other) {
@@ -43,6 +40,15 @@ class CSVWriter {
    template<typename TF, typename... TR>
    constexpr void write(TF first, TR... other) {
       internal_write(first, other...);
+      m_stream << '\n';
+   }
+
+   template<typename TT, typename TF, typename... TR>
+   constexpr void write_trailing(std::span<TT> trailing, TF first, TR... other) {
+      internal_write(first, other...);
+      for (const auto &rest: trailing) {
+         m_stream << ',' << rest;
+      }
       m_stream << '\n';
    }
 };

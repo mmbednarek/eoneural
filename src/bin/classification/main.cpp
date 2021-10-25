@@ -2,6 +2,7 @@
 #include <eoneural/hpp/Network.hpp>
 #include <eoneural/hpp/Objective.hpp>
 #include <eoneural/hpp/Util.hpp>
+#include <eoneural/hpp/Logger.hpp>
 #include <rapidcsv.h>
 #include <string_view>
 #include <fmt/core.h>
@@ -99,7 +100,11 @@ static inline std::string make_input_filename(bool simple, std::string_view tp, 
 }
 
 static inline std::string make_output_filename(bool simple, int observation_count) {
-   return fmt::format("result/train.{}.{}.csv", simple ? "simple" : "three_gauss", observation_count);
+   return fmt::format("result/log.{}.{}.csv", simple ? "simple" : "three_gauss", observation_count);
+}
+
+static inline std::string make_training_filename(bool simple, int observation_count) {
+   return fmt::format("result/training.{}.{}.csv", simple ? "simple" : "three_gauss", observation_count);
 }
 
 static inline std::string make_network_filename(bool simple, int observation_count) {
@@ -138,7 +143,10 @@ void run_test(int observation_count, bool simple, bool mix, eoneural::RandomWeig
    eoneural::BasicContext ctx(net, train_data, 0.8, 0.1);
    eoneural::ClassificationObjective<CSVLogger> objective(train_data, test_data, target, CSVLogger(log_output));
 
-   net.train(ctx, objective);
+   std::ofstream training_fs(make_training_filename(simple, observation_count));
+   eoneural::TrainLogger train_logger(net, training_fs);
+
+   net.train(ctx, objective, train_logger);
 
    std::ofstream points_train(make_points_filename(simple, "train", observation_count));
    write_train_pass(points_train, net, train_data);
