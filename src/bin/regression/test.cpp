@@ -15,7 +15,7 @@ class CSVLogger {
       m_writer.write("iteration", "mse");
    }
 
-   constexpr void log_mse(double mse) {
+   inline void log_mse(double mse) {
       fmt::print("{}\r", mse);
       m_writer.write(m_iteration_id, mse);
       ++m_iteration_id;
