@@ -1,6 +1,6 @@
 # eoNeural (eon)
 
-Simple cli application to do_train_iteration neural networks.
+Simple cli application to train neural networks.
 
 ## Compilation
 
