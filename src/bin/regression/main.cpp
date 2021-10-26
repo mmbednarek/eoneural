@@ -8,6 +8,7 @@ static std::vector<TestConfig> prepare_config(std::uint32_t seed);
 auto main() -> int {
    auto test_cases = prepare_config(737);
 
+   int reached_target_count = 0;
    int i = 1;
    for (auto &test_case : test_cases) {
       fmt::print(fmt::emphasis::bold, "RUNNING TRAINING {}/{}\n", i, test_cases.size());
@@ -16,10 +17,18 @@ auto main() -> int {
       fmt::print("target: {}\n", test_case.target);
       fmt::print("activation function: {}\n", eoneural::activation_func_to_string(test_case.func));
       fmt::print("hidden layers: {}\n", format_hidden_layers(test_case.hidden_layers));
-      run_test(test_case);
+      fmt::print("epoch limit: {}\n", test_case.epoch_limit);
+      auto result = run_test(test_case);
       ++i;
-      fmt::print(fmt::fg(fmt::color::green), "\n[OK]\n");
+      if (result.reached_objective) {
+         ++reached_target_count;
+         fmt::print(fmt::fg(fmt::color::green), "\n[OK]\n");
+      }
+      else
+         fmt::print(fmt::fg(fmt::color::red), "\n[FAIL]\n");
    }
+
+   fmt::print(fmt::emphasis::bold, "\nDONE {}/{} networks reached objective\n", reached_target_count, test_cases.size());
 }
 
 static double choose_target(DatasetType type, eoneural::ActivationFunc func, int hidden_layer_count) {
@@ -47,7 +56,7 @@ static std::vector<TestConfig> prepare_config(std::uint32_t seed) {
                        .func = func,
                        .hidden_layers = hidden_layers,
                        .target = choose_target(type, func, hidden_layers.size()),
-                       .epoch_limit = 20000 / observation_count,
+                       .epoch_limit = static_cast<int>((20000 / observation_count) * (hidden_layers.size() + 1)),
                });
             }
       }

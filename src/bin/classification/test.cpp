@@ -8,17 +8,18 @@
 
 class CSVLogger {
    eoneural::CSVWriter m_writer;
-   std::size_t m_iteration_id = 0;
+   std::size_t m_epoch_id = 0;
 
  public:
    explicit CSVLogger(std::ostream &stream) : m_writer(stream) {
-      m_writer.write("iteration", "mse", "train", "test");
+      m_writer.write("epoch", "mse", "train", "test");
    }
 
    inline void log_categorisation(double mse, double train, double test) {
-      fmt::print("{}\r", test);
-      m_writer.write(m_iteration_id, mse, train, test);
-      ++m_iteration_id;
+      fmt::print("mse: {} train: {} test: {}\r", mse, train, test);
+      fflush(stdout);
+      m_writer.write(m_epoch_id, mse, train, test);
+      ++m_epoch_id;
    }
 };
 
@@ -26,7 +27,7 @@ static void write_train_pass(std::ostream &os, const eoneural::Network &net, std
 static std::vector<double> prepare_training_data(std::string_view filename, int category_count);
 static std::vector<double> prepare_and_mix_training_data(std::string_view filename, int category_count);
 
-void run_test(const TestConfig &cfg) {
+eoneural::TrainResult run_test(const TestConfig &cfg) {
    std::vector<double> train_data;
    auto output_count = dataset_type_to_output_count(cfg.type);
 
@@ -55,7 +56,7 @@ void run_test(const TestConfig &cfg) {
    std::ofstream training_log(cfg.train_log_filename());
    eoneural::TrainLogger train_logger(net, training_log);
 
-   net.train(ctx, objective, train_logger, cfg.epoch_limit);
+   auto result = net.train(ctx, objective, train_logger, cfg.epoch_limit);
 
    std::ofstream points_train(cfg.train_classification_filename());
    write_train_pass(points_train, net, train_data);
@@ -63,6 +64,8 @@ void run_test(const TestConfig &cfg) {
    write_train_pass(points_test, net, test_data);
 
    net.save(cfg.network_filename());
+
+   return result;
 }
 
 void write_train_pass(std::ostream &os, const eoneural::Network &net, std::span<double> test_data) {

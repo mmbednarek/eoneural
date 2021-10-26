@@ -86,6 +86,6 @@ struct TestConfig {
    }
 };
 
-void run_test(const TestConfig &cfg);
+eoneural::TrainResult run_test(const TestConfig &cfg);
 
 #endif//EONEURAL_TEST_HPP
