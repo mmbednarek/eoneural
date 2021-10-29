@@ -37,7 +37,7 @@ static double choose_target(DatasetType type, eoneural::ActivationFunc func, int
 
 std::array<std::vector<int>, 5> g_hidden_layers{
         std::vector<int>{},
-        std::vector<int>{6},
+        std::vector<int>{3},
         std::vector<int>{6, 3},
         std::vector<int>{6, 3, 3},
         std::vector<int>{6, 3, 3, 3},
