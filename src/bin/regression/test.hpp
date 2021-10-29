@@ -68,11 +68,11 @@ struct TestConfig {
    }
 
    [[nodiscard]] inline std::string test_classification_filename() const {
-      return fmt::format("result/points/test.{}.{}.{}.{}.net", eoneural::activation_func_to_string(func), format_hidden_layers(hidden_layers), dataset_type_to_string(type), observation_count);
+      return fmt::format("result/points/test.{}.{}.{}.{}.csv", eoneural::activation_func_to_string(func), format_hidden_layers(hidden_layers), dataset_type_to_string(type), observation_count);
    }
 
    [[nodiscard]] inline std::string train_classification_filename() const {
-      return fmt::format("result/points/train.{}.{}.{}.{}.net", eoneural::activation_func_to_string(func), format_hidden_layers(hidden_layers), dataset_type_to_string(type), observation_count);
+      return fmt::format("result/points/train.{}.{}.{}.{}.csv", eoneural::activation_func_to_string(func), format_hidden_layers(hidden_layers), dataset_type_to_string(type), observation_count);
    }
 };
 

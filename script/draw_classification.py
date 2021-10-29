@@ -8,7 +8,8 @@ from pygame.locals import *
 RED = (200, 0, 0, 255)
 GREEN = (20, 200, 20, 255)
 BLUE = (20, 20, 200, 255)
-YELLOW = (200, 20, 200, 255)
+PURPULE = (200, 20, 200, 255)
+YELLOW = (200, 200, 20, 255)
 
 
 def add_red_point(surf, x, y):
@@ -22,6 +23,8 @@ def get_point_color(point):
         return BLUE
     if (point.result == 1):
         return GREEN
+    if (point.result == 2):
+        return PURPULE
     return YELLOW
 
 def draw_board(surf, points):

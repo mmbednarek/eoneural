@@ -1,0 +1,2 @@
+add_executable(eoneural_test_class_bin main.cpp)
+target_link_libraries(eoneural_test_class_bin eoneural_hpp rapidcsv fmt)

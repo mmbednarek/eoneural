@@ -35,6 +35,7 @@ constexpr std::string_view activation_func_to_string(ActivationFunc func) {
 
 struct TrainResult {
    double mse;
+   double mae;
    bool reached_objective{};
 };
 
