@@ -1,5 +1,6 @@
 #include <eoneural/activation.h>
 #include <eoneural/network.h>
+#include <eoneural/batch.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -255,7 +256,7 @@ double *network_perform(network_t net, const double *input) {
    return net->primary; /*Return value is not copied!*/
 }
 
-static double *network_perform_ex(network_t net, double *input, double *output_partial, double *output) {
+double *network_perform_ex(network_t net, const double *input, double *output_partial, double *output) {
    int num_weight, layer, n, neuron_index;
    neuron_t neuron;
    double (*act_func)(double, double *);
@@ -285,7 +286,7 @@ double *network_alloc_area(network_t net) {
    return (double *) malloc(sizeof(double) * net->total_neurons);
 }
 
-static void network_backprop(network_t net, double *partial, double *outputs, double *errors) {
+void network_backprop(network_t net, double *partial, double *outputs, double *errors) {
    int layer, n, i, num_weight, neuron_index, neuron_calc_index;
    double (*act_func_deri)(double, double);
    neuron_t neuron = net->neurons + net->total_weights;
@@ -301,11 +302,6 @@ static void network_backprop(network_t net, double *partial, double *outputs, do
    foreach_layer_rev(net, layer, num_weight) {
       neuron_calc_index -= num_weight;
 
-      // Zero the errors
-      for (i = 0; i < num_weight; i++) {
-         errors[neuron_calc_index + i] = 0.0;
-      }
-
       // For each neuron reversed
       for (n = net->num_neurons[layer] - 1; n >= 0; n--) {
          neuron -= num_weight + 1;
@@ -315,6 +311,36 @@ static void network_backprop(network_t net, double *partial, double *outputs, do
             errors[neuron_calc_index + i] += errors[neuron_index] * neuron[i + 1] * act_func_deri(outputs[neuron_calc_index + i], partial[neuron_calc_index + i]);
          }
       }
+   }
+}
+
+void network_train_batch(network_t net, batch_t batch, double learning, double momentum) {
+   size_t neuron_index = 0;
+   neuron_t neuron = net->neurons;
+   double *deltas = net->deltas;
+   double *neuron_input = input;
+   size_t layer = 0;
+   size_t num_weight = 0;
+
+   foreach_layer(net, layer, num_weight) {
+      tmp = outputs + neuron_index;
+      foreach_neuron(net, n, neuron, layer, num_weight) {
+
+         deltas[0] *= momentum;
+         deltas[0] -= learning * errors[neuron_index];
+         neuron[0] += deltas[0];
+
+         for (i = 1; i <= num_weight; i++) {
+            deltas[i] *= momentum;
+            deltas[i] -= learning * errors[neuron_index] * neuron_input[i - 1];
+            neuron[i] += deltas[i];
+         }
+
+         neuron_index++;
+         deltas += num_weight + 1;
+      }
+
+      neuron_input = tmp;
    }
 }
 
@@ -339,6 +365,7 @@ double network_train(network_t net, double *partial, double *outputs, double *er
 
    mse /= net->num_out;
 
+   memset(errors, 0, net->total_weights);
    network_backprop(net, partial, outputs, errors);
 
    neuron_index = 0;
@@ -348,8 +375,8 @@ double network_train(network_t net, double *partial, double *outputs, double *er
 
    foreach_layer(net, layer, num_weight) {
       tmp = outputs + neuron_index;
-      foreach_neuron(net, n, neuron, layer, num_weight) {
 
+      foreach_neuron(net, n, neuron, layer, num_weight) {
          deltas[0] *= momentum;
          deltas[0] -= learning * errors[neuron_index];
          neuron[0] += deltas[0];
