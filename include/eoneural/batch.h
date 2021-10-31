@@ -4,7 +4,7 @@
 #pragma once
 
 struct network_header;
-typedef struct network_header* network_t;
+typedef struct network_header *network_t;
 
 struct batch {
    network_t net;
@@ -16,8 +16,9 @@ struct batch {
 typedef struct batch batch_t;
 
 batch_t batch_create(network_t net);
-void batch_reset(batch_t batch);
-void batch_pass_data(batch_t batch, const double *input, const double *target);
+void batch_begin(batch_t batch, double momentum);
+void batch_end(batch_t batch);
+void batch_put(batch_t batch, const double *input, const double *target, double learning);
 void batch_destroy(batch_t batch);
 
-#endif // H_EONEURAL_BATCH
+#endif// H_EONEURAL_BATCH
