@@ -12,8 +12,8 @@ Batch::~Batch() {
    batch_end(m_batch.raw());
 }
 
-void Batch::put(const std::span<double> in, const std::span<double> out, double learning) {
-   batch_put(m_batch.raw(), in.data(), out.data(), learning);
+void Batch::put(const double *in, const double *out, double learning) {
+   batch_put(m_batch.raw(), in, out, learning);
 }
 
 BatchTrain::BatchTrain(const Network &net) : m_batch(batch_create(net.raw())) {}

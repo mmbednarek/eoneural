@@ -18,7 +18,7 @@ class MSEObjective {
  public:
    constexpr explicit MSEObjective(double mse, TL log = TL()) : m_mse(mse), m_log(std::move(log)) {}
 
-   [[nodiscard]] constexpr bool has_reached_objective(const TrainContext auto &ctx, const Network &net, const TrainResult &res) {
+   [[nodiscard]] constexpr bool has_reached_objective(const Network &net, const TrainResult &res) {
       m_log.log_mse(res.mse);
       return res.mse <= m_mse;
    }
@@ -56,12 +56,12 @@ class ClassificationObjective {
 
  public:
    inline ClassificationObjective(std::span<double> training, std::span<double> test, double target, TL logger = TL()) : m_training(training),
-                                                                                                                                m_test(test),
-                                                                                                                                m_target(target),
-                                                                                                                                m_logger(std::move(logger)) {}
+                                                                                                                         m_test(test),
+                                                                                                                         m_target(target),
+                                                                                                                         m_logger(std::move(logger)) {}
 
 
-   [[nodiscard]] constexpr bool has_reached_objective(const TrainContext auto &ctx, const Network &net, const TrainResult &res) {
+   [[nodiscard]] constexpr bool has_reached_objective(const Network &net, const TrainResult &res) {
       auto train_level = test_categorisation(net, m_training);
       auto test_level = test_categorisation(net, m_test);
 

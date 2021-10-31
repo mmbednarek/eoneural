@@ -6,7 +6,7 @@
 static std::vector<TestConfig> prepare_config(std::uint32_t seed);
 
 auto main() -> int {
-   auto test_cases = prepare_config(737);
+   auto test_cases = prepare_config(727272);
 
    int reached_target_count = 0;
    int i = 1;
@@ -57,22 +57,22 @@ static double choose_target(DatasetType type, eoneural::ActivationFunc func, int
       }
    }
 
-   return 0.93;
+   return 0.99;
 }
 
 std::array<std::vector<int>, 5> g_hidden_layers{
-        std::vector<int>{},
-        std::vector<int>{3},
-        std::vector<int>{6, 3},
-        std::vector<int>{6, 3, 3},
-        std::vector<int>{6, 3, 3, 3},
+      //   std::vector<int>{},
+      //   std::vector<int>{3},
+      //   std::vector<int>{3, 10},
+        std::vector<int>{24, 12, 6},
+      //   std::vector<int>{6, 3, 3, 3},
 };
 
 static std::vector<TestConfig> prepare_config(std::uint32_t seed) {
    std::vector<TestConfig> result;
-   for (auto type : {DatasetType::Simple, DatasetType::ThreeGauss}) {
-      for (auto observation_count : {100, 500, 1000, 10000}) {
-         for (auto func : {eoneural::ActivationFunc::Sigmoid, eoneural::ActivationFunc::Tanh, eoneural::ActivationFunc::Gaussian})
+   for (auto type : {/*DatasetType::Simple, */DatasetType::ThreeGauss}) {
+      for (auto observation_count : {1000}) {
+         for (auto func : {eoneural::ActivationFunc::Sigmoid/*, eoneural::ActivationFunc::Tanh, eoneural::ActivationFunc::Gaussian*/})
             for (const auto& hidden_layers : g_hidden_layers) {
                result.push_back(TestConfig{
                        .observation_count = observation_count,
@@ -81,7 +81,7 @@ static std::vector<TestConfig> prepare_config(std::uint32_t seed) {
                        .func = func,
                        .hidden_layers = hidden_layers,
                        .target = choose_target(type, func, hidden_layers.size()),
-                       .epoch_limit = static_cast<int>(20000 / observation_count * (hidden_layers.size() + 1)),
+                       .epoch_limit = static_cast<int>(200000 / observation_count * (hidden_layers.size() + 1)),
                });
             }
       }

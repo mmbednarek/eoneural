@@ -83,11 +83,53 @@ TEST(Train, BatchTrainXor) {
 
    for (size_t i = 0; i < 100000; ++i) {
       eoneural::Batch b(train, 0.2);
-      b.put(input0, output0, 0.8);
-      b.put(input1, output1, 0.8);
-      b.put(input2, output2, 0.8);
-      b.put(input3, output3, 0.8);
+      b.put(input0.data(), output0.data(), 0.8);
+      b.put(input1.data(), output1.data(), 0.8);
+      b.put(input2.data(), output2.data(), 0.8);
+      b.put(input3.data(), output3.data(), 0.8);
    }
+
+   auto do_xor = [&net](double x, double y) -> double {
+      std::array<double, 2> val{x, y};
+      double out;
+      net.pass(val.begin(), &out);
+      return out;
+   };
+
+   fmt::print("0 0: {}\n", do_xor(0, 0));
+   fmt::print("0 1: {}\n", do_xor(0, 1));
+   fmt::print("1 0: {}\n", do_xor(1, 0));
+   fmt::print("1 1: {}\n", do_xor(1, 1));
+}
+
+TEST(Train, BatchTrainXor2) {
+   eoneural::RandomWeightGenerator weight_gen(345345);
+
+   auto net = eoneural::NetworkBuilder()
+                      .with_activation_func(eoneural::ActivationFunc::Sigmoid)
+                      .with_input_count(2)
+                      .with_layer(2)
+                      .with_layer(1)
+                      .with_weight_generator(weight_gen)
+                      .build();
+
+   std::array<double, 12> train_data{
+           0,
+           0,
+           /* -> */ 0,
+           0,
+           1,
+           /* -> */ 1,
+           1,
+           0,
+           /* -> */ 1,
+           1,
+           1,
+           /* -> */ 0,
+   };
+
+   eoneural::MSEObjective<SpdMseLog> objective(0.001);
+   net.batch_train(objective, train_data, 4, 0.8, 0.1);
 
    auto do_xor = [&net](double x, double y) -> double {
       std::array<double, 2> val{x, y};

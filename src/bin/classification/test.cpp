@@ -50,13 +50,12 @@ eoneural::TrainResult run_test(const TestConfig &cfg) {
 
    std::ofstream objective_log(cfg.objective_log_filename());
 
-   eoneural::BasicContext ctx(net, train_data, 0.8, 0.1);
    eoneural::ClassificationObjective<CSVLogger> objective(train_data, test_data, cfg.target, CSVLogger(objective_log));
 
    std::ofstream training_log(cfg.train_log_filename());
    eoneural::TrainLogger train_logger(net, training_log);
 
-   auto result = net.train(ctx, objective, train_logger, cfg.epoch_limit);
+   auto result = net.batch_train(objective, train_data, 5, 0.8, 0.2, cfg.epoch_limit);
 
    std::ofstream points_train(cfg.train_classification_filename());
    write_train_pass(points_train, net, train_data);

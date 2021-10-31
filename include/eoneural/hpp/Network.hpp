@@ -3,6 +3,8 @@
 extern "C" {
 #include "../network.h"
 };
+#include "Batch.hpp"
+#include "BatchContext.hpp"
 #include <numeric>
 #include <string_view>
 #include <vector>
@@ -41,13 +43,20 @@ struct TrainResult {
 
 template<typename T>
 concept TrainContext = requires(T v) {
-   { v.momentum() } -> std::convertible_to<double>;
-   { v.learn() } -> std::convertible_to<double>;
-   { v.next_input() } -> std::convertible_to<const double *>;
-   { v.next_target() } -> std::convertible_to<const double *>;
-   { v.partial_output() } -> std::convertible_to<double *>;
-   { v.output() } -> std::convertible_to<double *>;
-   { v.errors() } -> std::convertible_to<double *>;
+   { v.momentum() }
+   ->std::convertible_to<double>;
+   { v.learn() }
+   ->std::convertible_to<double>;
+   { v.next_input() }
+   ->std::convertible_to<const double *>;
+   { v.next_target() }
+   ->std::convertible_to<const double *>;
+   { v.partial_output() }
+   ->std::convertible_to<double *>;
+   { v.output() }
+   ->std::convertible_to<double *>;
+   { v.errors() }
+   ->std::convertible_to<double *>;
    {v.on_iteration_finished()};
 };
 
@@ -59,10 +68,10 @@ template<typename IT>
    return std::max_element(beg, end) - beg;
 }
 
-template<typename TO, typename TC>
-concept TrainObjective = requires(TO to, const TC &ctx, const Network &net, const TrainResult &res) {
-   TrainContext<TC>;
-   { to.has_reached_objective(ctx, net, res) } -> std::convertible_to<bool>;
+template<typename TO>
+concept TrainObjective = requires(TO to, const Network &net, const TrainResult &res) {
+   { to.has_reached_objective(net, res) }
+   ->std::convertible_to<bool>;
 };
 
 template<typename T>
@@ -119,13 +128,45 @@ class Network {
       return m_net;
    }
 
+   TrainResult train_result(std::span<double> data);
+
+   template<TrainObjective TO, Logger TL = NoLogger>
+   inline eoneural::TrainResult batch_train(TO &to, std::span<double> train_data, std::size_t batch_size, double learning, double momentum, long max_epoch = -1) {
+      BatchContext ctx(*this, train_data);
+      BatchTrain batch_train(*this);
+      eoneural::TrainResult result{};
+      long epoch = 0;
+
+      do {
+         ctx.start_epoch();
+         int iteration = 0;
+         while (!ctx.has_finished_epoch()) {
+            Batch batch(batch_train, momentum);
+            for (std::size_t i = 0; i < batch_size; ++i) {
+               auto obs = ctx.next();
+               batch.put(obs.input, obs.output, learning);
+               ++iteration;
+            }
+         }
+         ++epoch;
+         result = train_result(train_data);
+
+         if (max_epoch != -1 && epoch > max_epoch)
+            return result;
+
+      } while (!to.has_reached_objective(*this, result));
+
+      result.reached_objective = true;
+      return result;
+   }
+
    double do_train_iteration(TrainContext auto &ctx) {
       auto mse = network_train(m_net, ctx.partial_output(), ctx.output(), ctx.errors(), ctx.next_input(), ctx.next_target(), ctx.learn(), ctx.momentum());
       ctx.on_iteration_finished();
       return mse;
    }
 
-   template<TrainContext TC, TrainObjective<TC> TO, Logger TL = NoLogger>
+   template<TrainContext TC, TrainObjective TO, Logger TL = NoLogger>
    TrainResult train(TC &ctx, TO &to, TL &logger = g_no_logger, int max_epoch = -1) {
       eoneural::TrainResult result{};
       int epoch = 0;
@@ -144,7 +185,7 @@ class Network {
 
          if (max_epoch != -1 && epoch > max_epoch)
             return result;
-      } while (!to.has_reached_objective(ctx, *this, result));
+      } while (!to.has_reached_objective(*this, result));
 
       result.reached_objective = true;
       return result;

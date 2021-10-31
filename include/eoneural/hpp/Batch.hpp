@@ -26,7 +26,7 @@ class Batch {
    Batch(Batch &&) noexcept = delete;
    Batch &operator=(Batch &&) noexcept = delete;
 
-   void put(const std::span<double> in, const std::span<double> out, double learning);
+   void put(const double *in, const double *out, double learning);
 };
 
 class BatchTrain {
