@@ -47,15 +47,32 @@ def make_lineplot_act(layer, kind, obs):
 
 def make_lineplot_obs(layer, act, kind):
     dt_100 = pd.read_csv(make_obj_path(
-        "classification", act, layer, kind, "100"))
+        "regression", act, layer, kind, "100"))
     dt_500 = pd.read_csv(make_obj_path(
-        "classification", act, layer, kind, "500"))
+        "regression", act, layer, kind, "500"))
     dt_1000 = pd.read_csv(make_obj_path(
-        "classification", act, layer, kind, "1000"))
+        "regression", act, layer, kind, "1000"))
     dt_10000 = pd.read_csv(make_obj_path(
-        "classification", act, layer, kind, "10000"))
+        "regression", act, layer, kind, "10000"))
     return pd.concat([dt_100, dt_500, dt_1000, dt_10000], keys=[
         '100', '500', '1000', '10000'], names=['key'])
+
+
+def make_lineplot_err(layer, act, kind, obs):
+    dt = pd.read_csv(make_obj_path(
+        "regression", act, layer, kind, obs))
+
+    dt_fields = pd.DataFrame({
+        'epoch': dt.epoch,
+        'mse': dt.mse,
+        'mae': dt.mae,
+        # 'klasyfikacja (treningowy)': dt.train * 100,
+        # 'klasyfikacja (testowy)': dt.test * 100,
+        # "cross entropy (treningowy)": dt.train_cross * 100,
+        # "cross entropy (testowy)": dt.train_cross * 100,
+    })
+
+    return pd.melt(dt_fields, ['epoch'])
 
 
 def process_lineplot(dt: pd.DataFrame, name: str, fields: list[str], act: str, layer: str, kind: str, obs: str):
@@ -69,11 +86,16 @@ def process_lineplot(dt: pd.DataFrame, name: str, fields: list[str], act: str, l
 
 
 def main():
-    dt_act = make_lineplot_act("none", "activation", 1000)
-    print(dt_act)
-    sbn.lineplot(x='epoch', y='train', hue='key',
-                 data=dt_act.replace(NaN, 1).where(dt_act.epoch < 1000))
+    dt = make_lineplot_err("none", "sigmoid", "activation", "1000")
+
+    sbn.lineplot(x='epoch', y='value', hue='variable', data=dt)
     plt.show()
+
+# dt_act = make_lineplot_obs("6-3-3-3", "sigmoid", "cube")
+# print(dt_act)
+# sbn.lineplot(x='epoch', y='mse', hue='key',
+#              data=dt_act.replace(NaN, 1).where(dt_act.epoch < 2000))
+# plt.show()
 
     return
 

@@ -338,7 +338,6 @@ double network_train(network_t net, double *partial, double *outputs, double *er
 
    mse /= net->num_out;
 
-   memset(errors, 0, net->total_weights);
    network_backprop(net, partial, outputs, errors);
 
    neuron_index = 0;
