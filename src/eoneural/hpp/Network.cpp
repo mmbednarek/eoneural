@@ -1,6 +1,7 @@
 #include <eoneural/hpp/Network.hpp>
 #include <stdexcept>
 #include <utility>
+#include <cmath>
 
 namespace eoneural {
 
@@ -40,6 +41,37 @@ Network NetworkBuilder::build() {
       return Network(network_create_raw(m_input_count, m_neuron_count.size(), m_neuron_count.data(), static_cast<unsigned char>(m_activation_func), m_weights.data()));
    }
    return Network(network_create(m_input_count, m_neuron_count.size(), m_neuron_count.data(), static_cast<unsigned char>(m_activation_func)));
+}
+
+
+TrainResult Network::train_result(std::span<double> data) {
+   if (data.empty())
+      return TrainResult{};
+   
+   auto it = data.begin();
+   double output[output_count()];
+
+   double mse = 0.0;
+   double mae = 0.0;
+
+   do {
+      pass(it, output);
+      it += input_count();
+
+      for (std::size_t i = 0; i < output_count(); ++i) {
+         auto err = *(it++) - output[i];
+         mse += err*err;
+         mae += fabs(err);
+      }
+
+      it += input_count() + output_count();
+   } while (it != data.end());
+
+
+   return TrainResult{
+      .mse = mse,
+      .mae = mae,
+   };
 }
 
 NoLogger g_no_logger;

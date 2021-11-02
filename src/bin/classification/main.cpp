@@ -6,7 +6,7 @@
 static std::vector<TestConfig> prepare_config(std::uint32_t seed);
 
 auto main() -> int {
-   auto test_cases = prepare_config(737);
+   auto test_cases = prepare_config(727272);
 
    int reached_target_count = 0;
    int i = 1;
@@ -62,10 +62,10 @@ static double choose_target(DatasetType type, eoneural::ActivationFunc func, int
 
 std::array<std::vector<int>, 5> g_hidden_layers{
         std::vector<int>{},
-        std::vector<int>{3},
-        std::vector<int>{6, 3},
-        std::vector<int>{6, 3, 3},
-        std::vector<int>{6, 3, 3, 3},
+        std::vector<int>{4},
+        std::vector<int>{8, 4},
+        std::vector<int>{8, 8, 4},
+        std::vector<int>{8, 8, 8, 4},
 };
 
 static std::vector<TestConfig> prepare_config(std::uint32_t seed) {
@@ -81,7 +81,7 @@ static std::vector<TestConfig> prepare_config(std::uint32_t seed) {
                        .func = func,
                        .hidden_layers = hidden_layers,
                        .target = choose_target(type, func, hidden_layers.size()),
-                       .epoch_limit = static_cast<int>(20000 / observation_count * (hidden_layers.size() + 1)),
+                       .epoch_limit = static_cast<int>(200000 / observation_count * (hidden_layers.size() + 1)),
                });
             }
       }

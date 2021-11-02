@@ -1,3 +1,6 @@
+#ifndef H_EONEURAL_NETWORK
+#define H_EONEURAL_NETWORK
+
 #pragma once
 #include "neuron.h"
 #include <stddef.h>
@@ -54,6 +57,8 @@ typedef struct network_header *network_t;
 network_t network_create_raw(int num_in, int num_layers, int *num_neurons, unsigned char activation, double *weights);
 network_t network_create(int num_in, size_t num_layers, int *num_neurons, unsigned char activation);
 double *network_perform(network_t net, const double *input);
+double *network_perform_ex(network_t net, const double *input, double *output_partial, double *output);
+void network_backprop(network_t net, double *partial, double *outputs, double *errors);
 double network_train(network_t net, double *partial, double *outputs, double *errors, const double *input, const double *target, double learning, double momentum);
 double *network_alloc_area(network_t net);
 void network_save(network_t net, const char *filename);
@@ -61,3 +66,5 @@ network_t network_load(const char *filename);
 void network_print(network_t net);
 void network_destroy(network_t net);
 network_t network_copy(network_t net);
+
+#endif// H_EONEURAL_NETWORK

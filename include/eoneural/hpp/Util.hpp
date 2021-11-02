@@ -13,7 +13,7 @@ class RandomWeightGenerator {
    using SeedType = std::mt19937::result_type;
 
    inline explicit RandomWeightGenerator(SeedType seed) : m_generator(seed),
-                                                          m_dist(0, 1) {}
+                                                          m_dist(-10, 10) {}
 
    inline double operator()() {
       return m_dist(m_generator);

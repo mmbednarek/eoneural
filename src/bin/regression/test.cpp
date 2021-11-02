@@ -55,6 +55,7 @@ eoneural::TrainResult run_test(const TestConfig &cfg) {
    std::ofstream training_log(cfg.train_log_filename());
    eoneural::TrainLogger train_logger(net, training_log);
 
+   // auto result = net.batch_train(objective, train_data, 1, 0.8, 0.1, cfg.epoch_limit);
    auto result = net.train(ctx, objective, train_logger, cfg.epoch_limit);
 
    std::ofstream points_train(cfg.train_classification_filename());
