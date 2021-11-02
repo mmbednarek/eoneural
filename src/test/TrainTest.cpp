@@ -16,8 +16,8 @@ class SpdMseLog {
 
 class SpdCatLog {
  public:
-   inline void log_categorisation(double mse, double train, double test) const {
-      spdlog::info("MSE: {}, Train: {}, Test: {}", mse, train, test);
+   inline void log_categorisation(double mse, double mae, double train, double test, double train_c, double test_c) const {
+      spdlog::info("MSE: {}, Train: {}, Test: {}, Train Entropy: {}, Test Entr: {}", mse, train, test, train_c, test_c);
    }
 };
 

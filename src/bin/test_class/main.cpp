@@ -16,7 +16,7 @@ class CSVLogger {
       m_writer.write("epoch", "mse", "train", "test");
    }
 
-   inline void log_categorisation(double mse, double train, double test) {
+   inline void log_categorisation(double mse, double mae, double train, double test, double train_c, double test_c) {
       fmt::print("mse: {} train: {} test: {}\r", mse, train, test);
       fflush(stdout);
       m_writer.write(m_epoch_id, mse, train, test);

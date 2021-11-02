@@ -12,13 +12,13 @@ class CSVLogger {
 
  public:
    explicit CSVLogger(std::ostream &stream) : m_writer(stream) {
-      m_writer.write("epoch", "mse", "train", "test");
+      m_writer.write("epoch", "mse", "mae", "train", "test", "train_cross", "test_cross");
    }
 
-   inline void log_categorisation(double mse, double train, double test) {
-      fmt::print("mse: {} train: {} test: {}\r", mse, train, test);
+   inline void log_categorisation(double mse, double mae, double train, double test, double train_c, double test_c) {
+      fmt::print("mse: {} mae: {} train: {} test: {} trainc: {}, testc: {}\r", mse, mae, train, test, train_c, test_c);
       fflush(stdout);
-      m_writer.write(m_epoch_id, mse, train, test);
+      m_writer.write(m_epoch_id, mse, mae, train, test, train_c, test_c);
       ++m_epoch_id;
    }
 };
@@ -55,7 +55,7 @@ eoneural::TrainResult run_test(const TestConfig &cfg) {
    std::ofstream training_log(cfg.train_log_filename());
    eoneural::TrainLogger train_logger(net, training_log);
 
-   auto result = net.batch_train(objective, train_data, 5, 0.8, 0.2, cfg.epoch_limit);
+   auto result = net.batch_train(objective, train_data, 2, 0.8, 0.2, cfg.epoch_limit);
 
    std::ofstream points_train(cfg.train_classification_filename());
    write_train_pass(points_train, net, train_data);

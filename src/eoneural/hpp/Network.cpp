@@ -1,6 +1,7 @@
 #include <eoneural/hpp/Network.hpp>
 #include <stdexcept>
 #include <utility>
+#include <cmath>
 
 namespace eoneural {
 
@@ -51,6 +52,7 @@ TrainResult Network::train_result(std::span<double> data) {
    double output[output_count()];
 
    double mse = 0.0;
+   double mae = 0.0;
 
    do {
       pass(it, output);
@@ -59,6 +61,7 @@ TrainResult Network::train_result(std::span<double> data) {
       for (std::size_t i = 0; i < output_count(); ++i) {
          auto err = *(it++) - output[i];
          mse += err*err;
+         mae += fabs(err);
       }
 
       it += input_count() + output_count();
@@ -67,6 +70,7 @@ TrainResult Network::train_result(std::span<double> data) {
 
    return TrainResult{
       .mse = mse,
+      .mae = mae,
    };
 }
 

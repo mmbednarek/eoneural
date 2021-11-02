@@ -57,22 +57,22 @@ static double choose_target(DatasetType type, eoneural::ActivationFunc func, int
       }
    }
 
-   return 0.99;
+   return 0.93;
 }
 
 std::array<std::vector<int>, 5> g_hidden_layers{
-      //   std::vector<int>{},
-      //   std::vector<int>{3},
-      //   std::vector<int>{3, 10},
-        std::vector<int>{24, 12, 6},
-      //   std::vector<int>{6, 3, 3, 3},
+        std::vector<int>{},
+        std::vector<int>{4},
+        std::vector<int>{8, 4},
+        std::vector<int>{8, 8, 4},
+        std::vector<int>{8, 8, 8, 4},
 };
 
 static std::vector<TestConfig> prepare_config(std::uint32_t seed) {
    std::vector<TestConfig> result;
-   for (auto type : {/*DatasetType::Simple, */DatasetType::ThreeGauss}) {
-      for (auto observation_count : {1000}) {
-         for (auto func : {eoneural::ActivationFunc::Sigmoid/*, eoneural::ActivationFunc::Tanh, eoneural::ActivationFunc::Gaussian*/})
+   for (auto type : {DatasetType::Simple, DatasetType::ThreeGauss}) {
+      for (auto observation_count : {100, 500, 1000, 10000}) {
+         for (auto func : {eoneural::ActivationFunc::Sigmoid, eoneural::ActivationFunc::Tanh, eoneural::ActivationFunc::Gaussian})
             for (const auto& hidden_layers : g_hidden_layers) {
                result.push_back(TestConfig{
                        .observation_count = observation_count,
